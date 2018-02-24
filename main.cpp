@@ -10,7 +10,7 @@ struct DanePrzyjaciela {
     string imie, nazwisko, email, adres, nrTelefonu;
 };
 
-string zamienPierwszaLiereNaDuza(string wyrazDoSprawdzenia) {
+string zamienPierwszaLitereNaDuza(string wyrazDoSprawdzenia) {
     if(wyrazDoSprawdzenia[0] >= 97 && wyrazDoSprawdzenia[0] <= 122)
         wyrazDoSprawdzenia[0] = wyrazDoSprawdzenia[0] - 32;
 
@@ -23,11 +23,11 @@ int wprowadzanieUzytkownika(DanePrzyjaciela tablicaDanychPrzyjaciol[], int ilosc
 
     cout << "Podaj imie: ";
     cin >> imie;
-    imie = zamienPierwszaLiereNaDuza(imie);
+    imie = zamienPierwszaLitereNaDuza(imie);
 
     cout << "Podaj nazwisko: ";
     cin >> nazwisko;
-    nazwisko = zamienPierwszaLiereNaDuza(nazwisko);
+    nazwisko = zamienPierwszaLitereNaDuza(nazwisko);
 
     cout << "Podaj adres: ";
     cin.sync();
@@ -69,7 +69,7 @@ void wyszukiwanieZaPomocaImienia(DanePrzyjaciela tablicaDanychPrzyjaciol[], int 
 
     cout << "Podaj imie szukanej osoby: ";
     cin >> imie;
-    imie = zamienPierwszaLiereNaDuza(imie);
+    imie = zamienPierwszaLitereNaDuza(imie);
 
     for(int i = 0; i < iloscPrzyjaciol; i++) {
         if(imie == tablicaDanychPrzyjaciol[i].imie) {
@@ -94,7 +94,7 @@ void wyszukiwanieZaPomocaNazwiska(DanePrzyjaciela tablicaDanychPrzyjaciol[], int
 
     cout << "Podaj nazwisko szukanej osoby: ";
     cin >> nazwisko;
-    nazwisko = zamienPierwszaLiereNaDuza(nazwisko);
+    nazwisko = zamienPierwszaLitereNaDuza(nazwisko);
 
     for(int i = 0; i < iloscPrzyjaciol; i++) {
         if(nazwisko == tablicaDanychPrzyjaciol[i].nazwisko) {
