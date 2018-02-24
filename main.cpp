@@ -184,7 +184,7 @@ int main() {
         cout << "~~~~" << endl;
         cout << "1. Wprowadz dane nowej osoby." << endl;
         cout << "2. Wyszukiwanie." << endl;
-        cout << "9. Wyjscie z ksiazki adresowej." << endl;
+        cout << "0. Wyjscie z ksiazki adresowej." << endl;
         cin >> wybor;
 
         if(wybor == '1')
@@ -207,7 +207,7 @@ int main() {
                 pokazWszystkichZnajomych(tablicaDanychPrzyjaciol, iloscPrzyjaciol);
         }
 
-        else if(wybor == '9')
+        else if(wybor == '0')
             exit(0);
     }
     return 0;
