@@ -17,9 +17,9 @@ string zamienPierwszaLitereNaDuza(string wyrazDoSprawdzenia) {
     return wyrazDoSprawdzenia;
 }
 
-void funkcjaZapisujacaDaneDoPliku(DanePrzyjaciela strukturaDanych) {
+void funkcjaZapisujacaDaneDoPliku(DanePrzyjaciela strukturaDanych, string nazwaPliku) {
     fstream plik;
-    plik.open("Ksiazka adresowa.txt", ios::out | ios::app);
+    plik.open(nazwaPliku.c_str(), ios::out | ios::app);
 
     plik << strukturaDanych.id << "|";
     plik << strukturaDanych.imie << "|";
@@ -43,6 +43,7 @@ void funkcjaWyswietlajacaDaneOsoby(vector<DanePrzyjaciela>&tablicaDanychPrzyjaci
 int wprowadzanieUzytkownika(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol, int iloscPrzyjaciol) {
     int idOsoby = 0;
     string imie, nazwisko, email, adres, nrTelefonu;
+    string nazwaPliku = "Adresaci.txt";
 
     if(iloscPrzyjaciol == 0)
         idOsoby = 1;
@@ -76,7 +77,7 @@ int wprowadzanieUzytkownika(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol, int
 
     tablicaDanychPrzyjaciol.push_back(strukturaDanych);
 
-    funkcjaZapisujacaDaneDoPliku(strukturaDanych);
+    funkcjaZapisujacaDaneDoPliku(strukturaDanych, nazwaPliku);
 
     cout << "Dodano osobe do ksiazki adresowej." << endl;
     Sleep(1500);
@@ -88,7 +89,7 @@ int wczytywanieDanychZPliku(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol, int
     int nrLinii = 1;
 
     fstream plik;
-    plik.open("Ksiazka adresowa.txt", ios::in);
+    plik.open("Adresaci.txt", ios::in);
 
     if(plik.good() == false) {
         cout << "Brak pliku tekstowego.";
@@ -147,7 +148,7 @@ void wyszukiwanieZaPomocaImienia(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol
     getch();
 }
 
-int wyszukiwanieZaPomocaNazwiska(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol) {
+void wyszukiwanieZaPomocaNazwiska(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol) {
     string nazwisko;
     int liczbaWyszukanychOsob = 0;
 
@@ -159,13 +160,32 @@ int wyszukiwanieZaPomocaNazwiska(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol
         if(nazwisko == tablicaDanychPrzyjaciol[i].nazwisko) {
             funkcjaWyswietlajacaDaneOsoby(tablicaDanychPrzyjaciol, i);
             liczbaWyszukanychOsob += 1;
-            getch();
-            return i;
         }
     }
     if(liczbaWyszukanychOsob == 0) {
         cout << "Ksiazka nie posiada osoby z takim nazwiskiem." << endl;
-        getch();
+    }
+    getch();
+}
+
+int wyszukiwanieNumeruId(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol) {
+    int id;
+    int liczbaWyszukanychOsob = 0;
+
+    system("cls");
+    cout << "Podaj ID osoby: ";
+    cin >> id;
+
+    for(int i = 0; i < tablicaDanychPrzyjaciol.size(); i++) {
+        if(id == tablicaDanychPrzyjaciol[i].id) {
+            funkcjaWyswietlajacaDaneOsoby(tablicaDanychPrzyjaciol, i);
+            liczbaWyszukanychOsob += 1;
+            return i;
+        }
+    }
+    if(liczbaWyszukanychOsob == 0) {
+        cout << "Ksiazka nie posiada osoby z takim numerem ID." << endl;
+        Sleep(1500);
         return liczbaWyszukanychOsob - 1;
     }
 }
@@ -184,7 +204,9 @@ void pokazWszystkichZnajomych(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol) {
 
 int funkcjaKasujaca(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol, int iloscPrzyjaciol) {
     char znak;
-    int i = wyszukiwanieZaPomocaNazwiska(tablicaDanychPrzyjaciol);
+    string nazwaPliku = "Adresaci.txt";
+
+    int i = wyszukiwanieNumeruId(tablicaDanychPrzyjaciol);
     if(i >= 0) {
         cout << endl << "Czy chcesz usunac kontakt? y/n ";
         cin >> znak;
@@ -193,12 +215,12 @@ int funkcjaKasujaca(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol, int iloscPr
             iloscPrzyjaciol -= 1;
 
             fstream plik;
-            plik.open("Ksiazka adresowa.txt", ios::out);
+            plik.open(nazwaPliku.c_str(), ios::out);
             plik << "";
             plik.close();
 
             for(int i = 0; i < iloscPrzyjaciol; i++) {
-                funkcjaZapisujacaDaneDoPliku(tablicaDanychPrzyjaciol[i]);
+                funkcjaZapisujacaDaneDoPliku(tablicaDanychPrzyjaciol[i], nazwaPliku);
             }
             cout << "Osoba zostala usunieta z ksiazki adresowej..." << endl;
             Sleep(1500);
@@ -211,48 +233,79 @@ int funkcjaKasujaca(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol, int iloscPr
 }
 
 void edycjaDanychOsoby(vector<DanePrzyjaciela>&tablicaDanychPrzyjaciol, int iloscPrzyjaciol) {
-    int i = wyszukiwanieZaPomocaNazwiska(tablicaDanychPrzyjaciol);
+    int i = wyszukiwanieNumeruId(tablicaDanychPrzyjaciol);
     string imie, nazwisko, adres, email, nrTelefonu;
+    string nazwaPliku = "Adresaci.txt";
     char znak;
+    int wybor;
 
     if(i >= 0) {
         cout << endl << "Czy chcesz edytowac dane? y/n ";
         cin >> znak;
         if(znak == 'y') {
-            cout << endl << "Wprowadz nowe dane:" << endl;
-            cout << "Podaj imie: ";
-            cin >> imie;
-            imie = zamienPierwszaLitereNaDuza(imie);
-            cout << "Podaj nazwisko: ";
-            cin >> nazwisko;
-            nazwisko = zamienPierwszaLitereNaDuza(nazwisko);
+            system("cls");
+            cout << endl << "Wybierz pozycje, ktora chcesz poprawic:"<< endl << endl;
+            cout << "1. Imie      " << tablicaDanychPrzyjaciol[i].imie << endl;
+            cout << "2. Nazwisko  " << tablicaDanychPrzyjaciol[i].nazwisko << endl;
+            cout << "3. Adres     " << tablicaDanychPrzyjaciol[i].adres << endl;
+            cout << "4. Email     " << tablicaDanychPrzyjaciol[i].email << endl;
+            cout << "5. Nr tel.   " << tablicaDanychPrzyjaciol[i].nrTelefonu << endl;
+            cout << endl << "0. Anuluj" <<endl;
 
-            cout << "Podaj adres: ";
-            cin.sync();
-            getline(cin, adres);
-            cout << "Podaj email: ";
-            cin >> email;
-            cout << "Podaj numer telefonu: ";
-            cin.sync();
-            getline(cin, nrTelefonu);
-
-            tablicaDanychPrzyjaciol[i].id = tablicaDanychPrzyjaciol[i].id;
-            tablicaDanychPrzyjaciol[i].imie = imie;
-            tablicaDanychPrzyjaciol[i].nazwisko = nazwisko;
-            tablicaDanychPrzyjaciol[i].adres = adres;
-            tablicaDanychPrzyjaciol[i].email = email;
-            tablicaDanychPrzyjaciol[i].nrTelefonu = nrTelefonu;
+            cin >> wybor;
+            switch(wybor) {
+            case 1:
+                cout <<"Wprowadz imie: ";
+                cin >> imie;
+                imie = zamienPierwszaLitereNaDuza(imie);
+                tablicaDanychPrzyjaciol[i].imie = imie;
+                cout << "Zmiany wprowadzono pomyslnie.";
+                Sleep(1500);
+                break;
+            case 2:
+                cout <<"Wprowadz nazwisko: ";
+                cin >> nazwisko;
+                nazwisko = zamienPierwszaLitereNaDuza(nazwisko);
+                tablicaDanychPrzyjaciol[i].nazwisko = nazwisko;
+                cout << "Zmiany wprowadzono pomyslnie.";
+                Sleep(1500);
+                break;
+            case 3:
+                cout <<"Wprowadz adres: ";
+                cin.sync();
+                getline(cin, adres);
+                tablicaDanychPrzyjaciol[i].adres = adres;
+                cout << "Zmiany wprowadzono pomyslnie.";
+                Sleep(1500);
+                break;
+            case 4:
+                cout <<"Wprowadz email: ";
+                cin >> email;
+                tablicaDanychPrzyjaciol[i].email = email;
+                cout << "Zmiany wprowadzono pomyslnie.";
+                Sleep(1500);
+                break;
+            case 5:
+                cout <<"Wprowadz numer telefonu: ";
+                cin.sync();
+                getline(cin, nrTelefonu);
+                tablicaDanychPrzyjaciol[i].nrTelefonu = nrTelefonu;
+                cout << "Zmiany wprowadzono pomyslnie.";
+                Sleep(1500);
+                break;
+            case 0:
+                cout << "Anulowano edycje.";
+                Sleep(1500);
+            }
 
             fstream plik;
-            plik.open("Ksiazka adresowa.txt", ios::out);
+            plik.open(nazwaPliku.c_str(), ios::out);
             plik << "";
             plik.close();
 
             for(int i = 0; i < iloscPrzyjaciol; i++) {
-                funkcjaZapisujacaDaneDoPliku(tablicaDanychPrzyjaciol[i]);
+                funkcjaZapisujacaDaneDoPliku(tablicaDanychPrzyjaciol[i], nazwaPliku);
             }
-            cout << "Zmiany wprowadzono pomyslnie.";
-            Sleep(1500);
         } else if(znak == 'n') {
             cout << "Anulowano edycje.";
             Sleep(1500);
@@ -276,9 +329,10 @@ int main() {
         cout << "~~~~" << endl;
         cout << "1. Wprowadz dane nowej osoby." << endl;
         cout << "2. Wyszukiwanie." << endl;
-        cout << "3. Edytuj kontakt." <<endl;
-        cout << "4. Usun osobe z ksiazki adresowej." << endl;
-        cout << "0. Wyjscie." << endl;
+        cout << "3. Edytuj kontakt." << endl;
+        cout << "4. Usun osobe z ksiazki adresowej." << endl << endl;
+        cout << "5. Zmien haslo." << endl;
+        cout << "6. Wyloguj sie." << endl;
         cin >> wybor;
 
         if(wybor == '1')
@@ -303,9 +357,6 @@ int main() {
 
         else if(wybor == '4')
             iloscPrzyjaciol = funkcjaKasujaca(tablicaDanychPrzyjaciol, iloscPrzyjaciol);
-
-        else if(wybor == '0')
-            exit(0);
     }
     return 0;
 }
